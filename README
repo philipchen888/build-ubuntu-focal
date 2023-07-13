@@ -45,7 +45,8 @@ Steps to build Ubuntu Focal sdcard image:
    sudo dd if=./out/sdcard.img of=/dev/sda bs=4096 conv=notrunc,fsync
 
 5. cd ~/build-ubuntu-focal/rk3328
-   git clone https://github.com/FireflyTeam/u-boot --depth=1 -b rk3328/firefly
+   git clone https://github.com/u-boot/u-boot.git -b u-boot-2023.07.y
+   change CONFIG_BINMAN to CONFIG_BINMAN2 in ./u-boot/Makefile
    git clone https://github.com/FireflyTeam/kernel --depth=1 -b rk3328/firefly
    cd kernel; mkdir tmp; cd tmp; mkdir lib;
    cd ../../; mkdir out;

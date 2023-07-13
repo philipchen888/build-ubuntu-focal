@@ -77,7 +77,7 @@ cleanuboot:
 builduboot:
 	cd u-boot; \
 	make clean; \
-	make ARCH=arm64 rk3328_defconfig; \
+	make ARCH=arm64 roc-cc-rk3328_defconfig; \
 	make all
 
 postbuilduboot:
