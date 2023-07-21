@@ -4,6 +4,7 @@ export OUT=$(PWD)/out
 export BOOT=$(OUT)/boot.img
 export ARCH=arm64
 export CROSS_COMPILE=/usr/local/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+export BL31=$(PWD)/rkbin/bin/rk33/rk3399_bl31_v1.26.elf
 
 all: u-boot kernel rootfs mksdcardimg
 
@@ -76,7 +77,7 @@ cleanuboot:
 builduboot:
 	cd u-boot; \
 	make clean; \
-	make ARCH=arm64 rock-pi-4b-rk3399_defconfig; \
+	make ARCH=arm64 rock-pi-4-rk3399_defconfig; \
 	make all
 
 postbuilduboot:

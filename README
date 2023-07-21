@@ -32,7 +32,8 @@ Steps to build Ubuntu Focal sdcard image:
    sudo dd if=./out/sdcard.img of=/dev/sda bs=4096 conv=notrunc,fsync
 
 4. cd ~/build-ubuntu-focal/radxa
-   git clone https://github.com/radxa/u-boot --depth=1 -b stable-4.4-rockpi4
+   sudo apt-get install libgnutls28-dev
+   git clone https://github.com/u-boot/u-boot.git -b u-boot-2023.07.y
    wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
    tar -xJf linux-5.15.tar.xz
    cd linux-5.15; mkdir tmp; cd tmp; mkdir lib;
@@ -46,7 +47,6 @@ Steps to build Ubuntu Focal sdcard image:
 
 5. cd ~/build-ubuntu-focal/rk3328
    git clone https://github.com/u-boot/u-boot.git -b u-boot-2023.07.y
-   change CONFIG_BINMAN to CONFIG_BINMAN2 in ./u-boot/Makefile
    git clone https://github.com/FireflyTeam/kernel --depth=1 -b rk3328/firefly
    cd kernel; mkdir tmp; cd tmp; mkdir lib;
    cd ../../; mkdir out;

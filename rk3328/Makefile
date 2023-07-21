@@ -4,6 +4,7 @@ export OUT=$(PWD)/out
 export BOOT=$(OUT)/boot.img
 export ARCH=arm64
 export CROSS_COMPILE=/usr/local/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+export BL31=$(PWD)/rkbin/rk33/rk3328_bl31_v1.34.bin
 
 all: u-boot kernel rootfs mksdcardimg
 
