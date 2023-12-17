@@ -10,7 +10,7 @@ all: kernel rootfs mksdcardimg
 
 cleanall:
 	cd linux; \
-	sudo make ARCH=arm clean
+	sudo make mrproper
 	sudo lb clean --purge
 	\rm -rf config
 	\rm -rf config linaro-rootfs.img
@@ -68,8 +68,7 @@ kernel: buildkernel postbuildkernel
 
 buildkernel:
 	cd linux; \
-	cp ../patches/bcm2711_defconfig arch/arm/configs/; \
-	make ARCH=arm clean; \
+	sudo make mrproper; \
 	make ARCH=arm bcm2711_defconfig; \
 	make ARCH=arm all -j4; \
 	sudo make ARCH=arm INSTALL_MOD_PATH=./tmp modules_install

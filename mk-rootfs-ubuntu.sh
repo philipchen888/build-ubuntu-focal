@@ -33,13 +33,11 @@ echo -e "\033[36m Extract image \033[0m"
 sudo tar -xpf live-image-$ARCH.tar.tar.gz
 
 if [ "$BOARD" == "radxa" ]; then
-sudo cp -rf ./linux-5.15/tmp/lib/modules $TARGET_ROOTFS_DIR/lib
+sudo cp -rf ./linux/tmp/lib/modules $TARGET_ROOTFS_DIR/lib
 elif [ "$BOARD" == "rpi4b" ]; then
 sudo cp -rf ./linux/tmp/lib/modules $TARGET_ROOTFS_DIR/lib
-elif [ "$BOARD" == "rk3328" ]; then
-sudo cp -rf ./kernel/tmp/lib/modules $TARGET_ROOTFS_DIR/lib
 elif [ "$BOARD" == "tinker" ]; then
-sudo cp -rf ./linux-5.10/tmp/lib/modules $TARGET_ROOTFS_DIR/lib
+sudo cp -rf ./linux/tmp/lib/modules $TARGET_ROOTFS_DIR/lib
 fi
 
 # packages folder
@@ -73,6 +71,16 @@ if [ "$BOARD" == "rpi4b" ]; then
 echo -e "\033[36m Install rpiwifi..................... \033[0m"
 dpkg -i /packages/rpiwifi/firmware-brcm80211_20210315-3_all.deb
 cp /packages/rpiwifi/brcmfmac43455-sdio.txt /lib/firmware/brcm/
+apt-get install -f -y
+elif [ "$BOARD" == "radxa" ]; then
+mkdir -p /lib/firmware/brcm
+cp /packages/rkwifibt/brcmfmac43456-sdio.bin /lib/firmware/brcm/brcmfmac43456-sdio.radxa,rockpi4b.bin
+cp /packages/rkwifibt/brcmfmac43456-sdio.radxa,rockpi4b.txt /lib/firmware/brcm/
+cp /packages/rkwifibt/BCM4345C5.hcd /lib/firmware/brcm/
+apt-get install -f -y
+elif [ "$BOARD" == "tinker" ]; then
+dpkg -i /packages/rtlwifibt/firmware-realtek_20210315-3_all.deb
+cp /lib/firmware/rtl_bt/rtl8723bs_config-OBDA8723.bin /lib/firmware/rtl_bt/rtl8723bs_config.bin
 apt-get install -f -y
 fi
 

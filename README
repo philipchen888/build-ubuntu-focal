@@ -1,7 +1,6 @@
 This is to build Ubuntu Focal sdcard image for following SBC's:
 rpi4b  ( Raspberry Pi 4B )
 radxa  ( Rock Pi 4B plus )
-rk3328 ( Renegade ROC-RK3328-CC )
 tinker ( ASUS TinkerBoard )
 
 Steps to build Ubuntu Focal sdcard image:
@@ -21,7 +20,7 @@ Steps to build Ubuntu Focal sdcard image:
    sudo apt-get install build-essential git libssl-dev nmap net-tools libncurses5-dev libncursesw5-dev dnsutils vsftpd ftp binfmt-support qemu-user-static scons libncurses5-dev libncursesw5-dev libdbus-glib-1-dev libbluetooth-dev python-dev python-setuptools python3-dev python3-pip python3-setuptools libcurl4-openssl-dev gettext dbus-x11 chrpath diffstat gawk texinfo curl flex bison device-tree-compiler python swig
 
 3. cd ~/build-ubuntu-focal/rpi4b
-   git clone https://github.com/raspberrypi/linux --depth=1 -b rpi-5.4.y
+   git clone https://github.com/raspberrypi/linux --depth=1 -b rpi-6.1.y
    cd linux; mkdir tmp; cd tmp; mkdir lib;
    cd ../../; mkdir out;
 
@@ -34,9 +33,13 @@ Steps to build Ubuntu Focal sdcard image:
 4. cd ~/build-ubuntu-focal/radxa
    sudo apt-get install libgnutls28-dev
    git clone https://github.com/u-boot/u-boot.git -b u-boot-2023.07.y
-   wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
-   tar -xJf linux-5.15.tar.xz
-   cd linux-5.15; mkdir tmp; cd tmp; mkdir lib;
+   git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1
+   cp rk3399-rock-pi-4b.dts ./linux/arch/arm64/boot/dts/rockchip/
+   cp rk3399-rock-pi-4.dtsi ./linux/arch/arm64/boot/dts/rockchip/
+   delete rk3399-rock-pi-4a-plus.dtb in ./linux/arch/arm64/boot/dts/rockchip/Makefile
+   delete rk3399-rock-pi-4b-plus.dtb in ./linux/arch/arm64/boot/dts/rockchip/Makefile
+   delete rk3399-rock-pi-4c.dtb in ./linux/arch/arm64/boot/dts/rockchip/Makefile
+   cd linux; mkdir tmp; cd tmp; mkdir lib;
    cd ../../; mkdir out;
 
    make all
@@ -45,23 +48,12 @@ Steps to build Ubuntu Focal sdcard image:
 
    sudo dd if=./out/sdcard.img of=/dev/sda bs=4096 conv=notrunc,fsync
 
-5. cd ~/build-ubuntu-focal/rk3328
-   git clone https://github.com/u-boot/u-boot.git -b u-boot-2023.07.y
-   git clone https://github.com/FireflyTeam/kernel --depth=1 -b rk3328/firefly
-   cd kernel; mkdir tmp; cd tmp; mkdir lib;
-   cd ../../; mkdir out;
-
-   make all
-   The result is in ./out/sdcard.img
-   make cleanall
-
-   sudo dd if=./out/sdcard.img of=/dev/sda bs=4096 conv=notrunc,fsync
-
-6. cd ~/build-ubuntu-focal/tinker
+5. cd ~/build-ubuntu-focal/tinker
    git clone https://github.com/TinkerBoard/debian_u-boot.git --depth=1 -b release
-   wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-   tar -xJf linux-5.10.tar.xz
-   cd linux-5.10; mkdir tmp; cd tmp; mkdir lib;
+   git clone https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git --depth=1
+   cat multi_v7_defconfig >> ./linux/arch/arm/configs/multi_v7_defconfig
+   cp rk3288-tinker.dtsi ./linux/arch/arm/boot/dts/rockchip/
+   cd linux; mkdir tmp; cd tmp; mkdir lib;
    cd ../../; mkdir out;
 
    make all
@@ -70,8 +62,6 @@ Steps to build Ubuntu Focal sdcard image:
 
    sudo dd if=./out/sdcard.img of=/dev/sda bs=4096 conv=notrunc,fsync
 
-Plugin ehternet cable to radxa, tinker and rk3328.
-Plugin USB headphone to rpi4b and tinker.
 Plugin sdcard to SBC
 login:
 username: linaro
@@ -79,13 +69,8 @@ password: linaro
 uname -a
 lsb_release -a
 Disable power saving and screen saver.
-sudo ifconfig eth0 up
-sudo vi /etc/network/interfaces ( append
-auto eth0
-iface eth0 inet dhcp )
-sudo systemctl restart networking
 sudo ifconfig
-setup wifi for rpi4b: sudo nmcli dev wifi connect "SSID" password "PASSWD"
+sudo nmcli dev wifi connect "SSID" password "PASSWD"
 sudo ifconfig
 sudo vi /etc/apt/sources.list ( replace with http://mirrors.ocf.berkeley.edu/ubuntu-ports )
 sudo dpkg-reconfigure tzdata
@@ -98,15 +83,20 @@ sudo apt update
 sudo apt upgrade
 sudo apt dist-upgrade
 sync
+sudo shutdown -h now
+Power off, power on.
 glxinfo | grep OpenGL
 date
 
-sudo apt install python3-pip python3-setuptools vlc speedtest-cli glmark2-es2 ffmpeg
+sudo apt install python3-pip python3-setuptools mpv speedtest-cli glmark2-es2 ffmpeg
 speedtest-cli
-or if not working:
-speedtest-cli --secure
 glmark2-es2
 Firefox -> youtube.com -> search YmDNhi07_Ho
 pip3 install --no-deps -U yt-dlp
 ~/.local/bin/yt-dlp -f 'bestvideo[ext=mp4]+bestaudio[ext=m4a]' hyUhEjtlDLA -o avemaria.mp4
-vlc avemaria.mp4
+mpv avemaria.mp4
+
+sudo rfkill list
+hciconfig hci0
+hcitool dev
+hciconfig -a

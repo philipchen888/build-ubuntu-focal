@@ -10,7 +10,7 @@ all: u-boot kernel rootfs mksdcardimg
 cleanall:
 	cd debian_u-boot; \
 	make ARCH=arm clean
-	cd linux-5.10; \
+	cd linux; \
 	sudo make mrproper
 	sudo lb clean --purge
 	\rm -rf config
@@ -80,21 +80,21 @@ postbuilduboot:
 	cat ./u-boot.bin >> u-boot.img
 
 buildkernel:
-	cd linux-5.10; \
+	cd linux; \
 	sudo make mrproper; \
 	make multi_v7_defconfig; \
 	make all -j4; \
 	sudo make ARCH=arm INSTALL_MOD_PATH=./tmp modules_install
 
 postbuildkernel:
-	cd linux-5.10; \
+	cd linux; \
 	\rm -f $(BOOT); \
 	mkfs.vfat -n "boot" -S 512 -C ${BOOT} 102400; \
 	mmd -i ${BOOT} ::/extlinux; \
 	mcopy -i ${BOOT} -s ../rk3288.conf ::/extlinux/extlinux.conf; \
 	mcopy -i ${BOOT} -s ../hw_intf.conf ::; \
 	mcopy -i ${BOOT} -s ./arch/arm/boot/zImage ::; \
-	mcopy -i ${BOOT} -s ./arch/arm/boot/dts/rk3288-tinker.dtb ::
+	mcopy -i ${BOOT} -s ./arch/arm/boot/dts/rockchip/rk3288-tinker.dtb ::
 
 mksdcardimg:
 	./mksdcardimg.sh

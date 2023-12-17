@@ -11,7 +11,7 @@ all: u-boot kernel rootfs mksdcardimg
 cleanall:
 	cd u-boot; \
 	make clean
-	cd linux-5.15; \
+	cd linux; \
 	sudo make mrproper
 	sudo lb clean --purge
 	\rm -rf config linaro-rootfs.img
@@ -92,14 +92,14 @@ postbuilduboot:
 	cp trust.img ${OUT}/
 
 buildkernel:
-	cd linux-5.15; \
+	cd linux; \
 	sudo make mrproper; \
 	make defconfig; \
 	make all -j4; \
 	sudo make ARCH=arm64 INSTALL_MOD_PATH=./tmp modules_install
 
 postbuildkernel:
-	cd linux-5.15; \
+	cd linux; \
 	\rm -f $(BOOT); \
 	mkfs.vfat -n "boot" -S 512 -C ${BOOT} 512000; \
 	mmd -i ${BOOT} ::/extlinux; \
